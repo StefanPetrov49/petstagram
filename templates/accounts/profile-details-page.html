@@ -1,0 +1,114 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block page_content %}
+
+    <!-- Start Profile Details Section -->
+    <div class="profile">
+
+        <!-- Start Profile Personal Data Section -->
+        <div class="profile-data">
+            <div class="profile_img">
+                <div class="image">
+
+                    <!-- Profile Image -->
+                    {% if object.profile_picture %}
+                        <img src="{{ object.profile_picture }}">
+                    {% else %}
+                        <img src="{% static 'images/person.png' %}" alt="img8">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="personal">
+                <div class="edit">
+                    <!-- User Username -->
+                    <p>{{ object.username }}</p>
+                    {% if is_owner %}
+                        <!-- IF the viewer is the owner of the profile -->
+                        <!-- Link to Edit Profile Page -->
+                        <a href="{% url 'edit user' pk=object.pk %}">
+                            <img class="edit-img" src="{% static 'images/edit-pen-icon-6.jpg' %}" alt="edit button">
+                        </a>
+
+                        <!-- Link to Delete Profile Page -->
+                        <a href="{% url 'delete user' pk=object.pk %}">
+                            <img class="bin-img" src="{% static 'images/icon-remove-22.jpg' %}" alt="bin button">
+                        </a>
+                    {% endif %}
+                    <!-- End IF the viewer is the owner of the profile -->
+
+                </div>
+                <div class="data">
+
+                    <!-- Total Number of Photos by the User -->
+                    <span>{{ photos_count }}</span>
+                    <p>photos</p>
+
+                    <!-- Total Number of Pets owned by the User -->
+                    <span>{{ pets_count }}</span>
+                    <p>pets</p>
+
+                    <!-- Total Number of Likes for the User -->
+                    <span>{{ likes_count }}</span>
+                    <p>likes</p>
+                </div>
+                <!-- User First and Last Name IF Added -->
+                <h3 class="names">{{ object.get_user_name }}</h3>
+
+                <!-- User Email Address -->
+                <p class="email">{{ object.email }}</p>
+
+                <!-- User Gender IF Added -->
+                {% if object.gender %}
+                    <p class="gender">{{ object.gender }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- End Profile Personal Data Section -->
+        <div class="pets">
+            <div class="statuses">
+                {% for pet in pets %}
+                    <a href="{% url 'details pet' pet_name=pet.slug username=object.username %}">
+                        <div class="head-pet">
+                            <div class="status">
+                                <div class="image">
+                                    <img src="{{ pet.personal_photo }}"
+                                         alt="image of {{ pet.name }}">
+                                </div>
+                            </div>
+                            <p>{{ pet.name }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="pet-photos">
+            {% for pet_photo in photos %}
+                <a href="{% url 'details photo' pk=pet_photo.pk %}">
+                    <!-- Pet Photo -->
+                    <img src="{{ pet_photo.photo.url }}"
+                         alt="pet img">
+                </a>
+            {% endfor %}
+            <div class="pagination">
+            <span class="step-links">
+                {% if photos.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ photos.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ photos.number }} of {{ photos.paginator.num_pages }}.
+                </span>
+
+                {% if photos.has_next %}
+                    <a href="?page={{ photos.next_page_number }}">next</a>
+                    <a href="?page={{ photos.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Profile Details Section -->
+{% endblock %}
